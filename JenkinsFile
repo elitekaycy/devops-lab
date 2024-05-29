@@ -17,6 +17,15 @@ pipeline {
   }
 
   stages {
+    stage('pull git image') {
+      steps {
+          script {
+             checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/elitekaycy/devops-lab']])
+            }
+        }
+        
+    }
+
     stage('Build Docker Images') {
       steps {
         script {
