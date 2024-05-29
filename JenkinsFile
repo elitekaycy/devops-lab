@@ -52,7 +52,7 @@ pipeline {
         steps {
             script {
                 withCredentials([usernamePassword(credentialsId: 'servercred', passwordVariable: 'pwd', usernameVariable: 'username')]) {
-                sh 'echo ${username}@${remote.host}'
+                sh 'echo ${username}@${host}'
                 sh 'sshpass -p ${pwd} ssh -o StrictHostKeyChecking=no ${username}@${host} "[[ ! -d ~/chatservice ]] && mkdir ~/chatservice"'
                 sh 'sshpass -p ${pwd} scp -r -o StrictHostKeyChecking=no ./compose-prod.yml ./prometheus/prometheus.yml ${username}@${host}:~/chatservice' 
                 }
