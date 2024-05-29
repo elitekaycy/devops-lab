@@ -43,6 +43,7 @@ pipeline {
            }
           }
         }
+      }
 
     stage('transfer files') {
         steps {
