@@ -49,8 +49,8 @@ pipeline {
     stage('transfer files') {
         steps {
             script {
-                remote.password = env.SERVER_CRED.PSW
-                remote.user = env.SERVER_CRED.USR
+                remote.password = env.SERVER_CRED_PSW
+                remote.user = env.SERVER_CRED_USR
                 sh 'sshpass -p ${remote.password} scp -r -o StrictHostKeyChecking=no /compose-prod.yml /prometheus/prometheus.yml {remote.user}@${remote.host}:~/chatservice '
               }
      }    
@@ -60,8 +60,8 @@ pipeline {
    stage('build and run') {
        steps {
           script {
-                remote.password = env.SERVER_CRED.PSW
-                remote.user = env.SERVER_CRED.USR
+                remote.password = env.SERVER_CRED_PSW
+                remote.user = env.SERVER_CRED_USR
             }
 
            sshCommand(remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d")
