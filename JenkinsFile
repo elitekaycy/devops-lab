@@ -38,7 +38,7 @@ pipeline {
     stage('Push Docker Images') {
       steps {
         script {
-           withDockerRegistry(credentialsId: 'dockerhub', url: 'hub.docker.com') {
+           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://hub.docker.com') {
                sh 'docker push ${REGISTRY_USR}/chatservice:latest'
            }
           }
