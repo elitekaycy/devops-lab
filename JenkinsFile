@@ -38,8 +38,9 @@ pipeline {
     stage('Push Docker Images') {
       steps {
         script {
-           withDockerRegistry(credentialsId: 'dockerhub', url: 'https://hub.docker.com') {
-               sh 'docker push ${REGISTRY_USR}/chatservice:latest'
+             withCredentials([usernamePassword(credentialsId: 'dockerhub', passwordVariable: 'pwd', usernameVariable: 'username')]) {
+                 sh "echo ${pwd} | docker login -u ${username} --password-stdin"
+                 sh "docker push ${REGISTRY_USR}/chatservice:latest"
            }
           }
         }
@@ -71,6 +72,7 @@ pipeline {
 
   post {
     always {
+      sh 'docker logout'
       cleanWs()
     }
   }
