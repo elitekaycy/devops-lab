@@ -12,6 +12,7 @@ pipeline {
 
     environment {
     REGISTRY = 'hub.docker.com'
+    REGISTRY_USR = 'elitekaycy'
     REGISTRY_CREDENTIALS = credentials('dockerhub') 
     SERVER_CRED = credentials('servercred')
   }
@@ -29,7 +30,7 @@ pipeline {
     stage('Build Docker Images') {
       steps {
         script {
-          sh 'docker build -f DockerFile . -t ${REGISTRY}/chatservice:latest'
+          sh 'docker build -f DockerFile . -t ${REGISTRY_USR}/chatservice:latest'
         }
       }
     }
@@ -38,7 +39,7 @@ pipeline {
       steps {
         script {
           docker.withRegistry("https://${REGISTRY}", REGISTRY_CREDENTIALS) {
-            sh 'docker push ${REGISTRY}/chatservice:latest'
+            sh 'docker push ${REGISTRY_USR}/chatservice:latest'
           }
         }
       }
