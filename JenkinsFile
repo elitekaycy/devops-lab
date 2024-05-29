@@ -38,12 +38,11 @@ pipeline {
     stage('Push Docker Images') {
       steps {
         script {
-          docker.withRegistry("https://${REGISTRY}", REGISTRY_CREDENTIALS) {
-            sh 'docker push ${REGISTRY_USR}/chatservice:latest'
+           withDockerRegistry(credentialsId: 'dockerhub', url: 'hub.docker.com') {
+               sh 'docker push ${REGISTRY_USR}/chatservice:latest'
+           }
           }
         }
-      }
-    }
 
     stage('transfer files') {
         steps {
