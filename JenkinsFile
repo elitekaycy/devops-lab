@@ -1,0 +1,67 @@
+def remote = [:]
+remote.name = 'dickson'
+remote.host = '192.168.23.31'
+remote.allowAnyHosts = true
+
+pipeline {
+   agent any
+   tools {
+      jdk 'jdk-20'
+      maven '3.9.5'
+    }
+
+    environment {
+    REGISTRY = 'hub.docker.com'
+    REGISTRY_CREDENTIALS = credentials('dockerhub') 
+    SERVER_CRED = credentials('servercred')
+  }
+
+  stages {
+    stage('Build Docker Images') {
+      steps {
+        script {
+          sh 'docker build -f Dockerfile . -t ${REGISTRY}/chatservice:latest'
+        }
+      }
+    }
+
+    stage('Push Docker Images') {
+      steps {
+        script {
+          docker.withRegistry("https://${REGISTRY}", REGISTRY_CREDENTIALS) {
+            sh 'docker push ${REGISTRY}/chatservice:latest'
+          }
+        }
+      }
+    }
+
+    stage('transfer files') {
+        steps {
+            script {
+                remote.password = env.SERVER_CRED.PSW
+                remote.user = env.SERVER_CRED.USR
+                sh 'sshpass -p ${remote.password} scp -r -o StrictHostKeyChecking=no /compose-prod.yml /prometheus/prometheus.yml {remote.user}@${remote.host}:~/chatservice '
+              }
+     }    
+   }
+
+
+   stage('build and run') {
+       steps {
+          script {
+                remote.password = env.SERVER_CRED.PSW
+                remote.user = env.SERVER_CRED.USR
+            }
+
+           sshCommand(remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d")
+        }
+
+    }
+  }
+
+  post {
+    always {
+      cleanWs()
+    }
+  }
+ }
