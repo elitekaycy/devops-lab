@@ -49,14 +49,13 @@ pipeline {
     stage('transfer files') {
         steps {
             script {
-                remote.password = env.SERVER_CRED_PSW
-                remote.user = env.SERVER_CRED_USR
-              }
-          sh 'echo ${remote.user}'
-          sh 'sshpass -p ${remote.password} ssh -o StrictHostKeyChecking=no dickson@192.168.23.31 "[[ ! -d ~/chatservice ]] && mkdir ~/chatservice"'
-          sh 'sshpass -p ${remote.password} scp -r -o StrictHostKeyChecking=no ./compose-prod.yml ./prometheus/prometheus.yml {remote.user}@${remote.host}:~/chatservice '
+                withCredentials([usernamePassword(credentialsId: 'servercred', passwordVariable: 'pwd', usernameVariable: 'username')]) {
 
-     }
+                sh 'sshpass -p ${pwd} ssh -o StrictHostKeyChecking=no ${username}@${remote.host} "[[ ! -d ~/chatservice ]] && mkdir ~/chatservice"'
+                sh 'sshpass -p ${pwd} scp -r -o StrictHostKeyChecking=no ./compose-prod.yml ./prometheus/prometheus.yml ${username}@${remote.host}:~/chatservice' 
+                }
+              }
+     }    
    }
 
 
