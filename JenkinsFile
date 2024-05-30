@@ -70,7 +70,6 @@ pipeline {
 
            sshCommand(remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d")
         }
-
     } 
 
   post {
@@ -79,5 +78,7 @@ pipeline {
       cleanWs()
     }
   }
+
+
   }
  }
