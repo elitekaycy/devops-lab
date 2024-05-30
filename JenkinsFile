@@ -51,8 +51,8 @@ pipeline {
                     remote.allowAnyHosts = true
 
 
-                    sshCommand remote: remote, command: "sudo mkdir -p /chatservice"
-                    sshPut remote: remote, from: 'compose-prod.yml', into: '/chatservice'
+                    sshCommand remote: remote, command: "mkdir -p ~/chatservice"
+                    sshPut remote: remote, from: 'compose-prod.yml', into: '~/chatservice'
                 }
             }
         }
