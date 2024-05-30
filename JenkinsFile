@@ -51,7 +51,7 @@ pipeline {
                     remote.allowAnyHosts = true
 
 
-                    sshCommand remote: remote, command: "mkdir -p /chatservice"
+                    sshCommand remote: remote, command: "sudo mkdir -p /chatservice"
                     sshPut remote: remote, from: 'compose-prod.yml', into: '/chatservice'
                 }
             }
@@ -67,7 +67,7 @@ pipeline {
                     remote.password = env.SERVER_CRED_PSW
                     remote.allowAnyHosts = true
 
-                    sshCommand remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d"
+                    sshCommand remote: remote, command: "cd ~/chatservice && sudo docker-compose -f compose-prod.yml up -d"
                 }
             }
         }
