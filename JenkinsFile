@@ -52,7 +52,7 @@ pipeline {
 
 
                     sshCommand remote: remote, command: "mkdir -p ~/chatservice"
-                    sshPut remote: remote, from: 'compose-prod.yml', into: '/chatservice'
+                    sshPut remote: remote, from: 'compose-prod.yml', into: 'chatservice'
                 }
             }
         }
