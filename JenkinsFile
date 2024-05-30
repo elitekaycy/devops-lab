@@ -1,8 +1,3 @@
-def remote = [:]
-remote.name = 'dickson'
-remote.host = '192.168.23.31'
-remote.allowAnyHosts = true
-
 pipeline {
    agent any
    tools {
@@ -49,8 +44,8 @@ pipeline {
             steps {
                 script {
                     def remote = [:]
-                    remote.name = 'test'
-                    remote.host = 'test.domain.com'
+                    remote.name = 'dickson'
+                    remote.host = '192.168.23.31'
                     remote.user = env.SERVER_CRED_USR
                     remote.password = env.SERVER_CRED_PSW
                     remote.allowAnyHosts = true
@@ -66,8 +61,8 @@ pipeline {
             steps {
                 script {
                     def remote = [:]
-                    remote.name = 'test'
-                    remote.host = 'test.domain.com'
+                    remote.name = 'dickson'
+                    remote.host = '192.168.23.31'
                     remote.user = env.SERVER_CRED_USR
                     remote.password = env.SERVER_CRED_PSW
                     remote.allowAnyHosts = true
