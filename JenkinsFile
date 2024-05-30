@@ -3,8 +3,6 @@ remote.name = 'dickson'
 remote.host = '192.168.23.31'
 remote.allowAnyHosts = true
 
-def host = '192.168.23.31'
-
 pipeline {
    agent any
    tools {
@@ -17,7 +15,6 @@ pipeline {
     REGISTRY_USR = 'elitekaycy'
     REGISTRY_CREDENTIALS = credentials('dockerhub') 
     SERVER_CRED = credentials('servercred')
-    HOST='192.168.23.21'
   }
 
   stages {
@@ -48,32 +45,40 @@ pipeline {
         }
       }
 
-    stage('transfer files') {
-        steps {
-            script {
-                withCredentials([usernamePassword(credentialsId: 'servercred', passwordVariable: 'pwd', usernameVariable: 'username')]) {
-                sh 'echo ${username}@${HOST}'
-                sh 'sshpass -p ${pwd} ssh -o StrictHostKeyChecking=no ${username}@${host} "[[ ! -d ~/chatservice ]] && mkdir ~/chatservice"'
-                sh 'sshpass -p ${pwd} scp -r -o StrictHostKeyChecking=no ./compose-prod.yml ./prometheus/prometheus.yml ${username}@${host}:~/chatservice' 
+     stage('Transfer files') {
+            steps {
+                script {
+                    def remote = [:]
+                    remote.name = 'test'
+                    remote.host = 'test.domain.com'
+                    remote.user = env.SERVER_CRED_USR
+                    remote.password = env.SERVER_CRED_PSW
+                    remote.allowAnyHosts = true
+
+                    sshCommand remote: remote, command: "mkdir -p ~/chatservice"
+
+                    sshPut remote: remote, from: 'compose-prod.yml', into: '~/chatservice/compose-prod.yml'
                 }
-              }
-     }
+            }
+        }
+
+        stage('Build and Run') {
+            steps {
+                script {
+                    def remote = [:]
+                    remote.name = 'test'
+                    remote.host = 'test.domain.com'
+                    remote.user = env.SERVER_CRED_USR
+                    remote.password = env.SERVER_CRED_PSW
+                    remote.allowAnyHosts = true
+
+                    sshCommand remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d"
+                }
+            }
+        }
    }
 
-
-   stage('build and run') {
-       steps {
-          script {
-                remote.password = env.SERVER_CRED_PSW
-                remote.user = env.SERVER_CRED_USR
-            }
-
-           sshCommand(remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d")
-        }
-    } 
-    }
-
-  post {
+    post {
     always {
       sh 'docker logout'
       cleanWs()
