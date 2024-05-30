@@ -27,7 +27,6 @@ pipeline {
              checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/elitekaycy/devops-lab']])
             }
         }
-        
     }
 
     stage('Build Docker Images') {
@@ -36,7 +35,7 @@ pipeline {
           sh 'docker build -f DockerFile . -t ${REGISTRY_USR}/chatservice:latest'
         }
       }
-    
+    }
 
     stage('Push Docker Images') {
       steps {
@@ -72,13 +71,13 @@ pipeline {
            sshCommand(remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d")
         }
 
-    }
-  }
+    } 
 
   post {
     always {
       sh 'docker logout'
       cleanWs()
     }
+  }
   }
  }
