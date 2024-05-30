@@ -67,7 +67,7 @@ pipeline {
                     remote.password = env.SERVER_CRED_PSW
                     remote.allowAnyHosts = true
 
-                    sshCommand remote: remote, command: "cd ~/chatservice && docker-compose -f compose-prod.yml up -d"
+                    sshCommand remote: remote, command: "cd ~/chatservice && docker compose -f compose-prod.yml up -d"
                 }
             }
         }
